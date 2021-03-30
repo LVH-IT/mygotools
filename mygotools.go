@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"os"
 	"os/exec"
+	"os/signal"
 	"runtime"
 	"strings"
+	"syscall"
 )
 
 var hostOS = runtime.GOOS
@@ -32,4 +34,12 @@ func ClearCLI() {
 	}
 	clear.Stdout = os.Stdout
 	clear.Run()
+}
+
+func CtrlC() {
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	<-sc
+	println("Exiting...")
+	os.Exit(1)
 }
