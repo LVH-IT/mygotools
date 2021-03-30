@@ -36,10 +36,13 @@ func ClearCLI() {
 	clear.Run()
 }
 
-func CtrlC() {
+func CtrlC(onExit func()) {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-sc
-	println("Exiting...")
+	if onExit != nil {
+		onExit()
+	}
+	print("Exiting...")
 	os.Exit(1)
 }
